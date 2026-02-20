@@ -1,0 +1,337 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Calculator, 
+  Users, 
+  TrendingUp, 
+  DollarSign, 
+  Clock, 
+  BarChart3, 
+  AlertCircle,
+  ArrowRight,
+  Info,
+  Building2
+} from 'lucide-react';
+
+const App = () => {
+  // --- State para variables de Agentes Humanos ---
+  const [numAgents, setNumAgents] = useState(10);
+  const [avgSalary, setAvgSalary] = useState(1200); // Salario + Carga Prestacional
+  const [trainingCost, setTrainingCost] = useState(500); // Costo onboarding por agente
+  const [attritionRate, setAttritionRate] = useState(15); // % de rotación anual
+  const [physicalInfrCost, setPhysicalInfrCost] = useState(150); // Costo por asiento (PC, Alquiler, Luz)
+  const [callsPerAgentDay, setCallsPerAgentDay] = useState(40);
+  const [avgCallDuration, setAvgCallDuration] = useState(5); // minutos
+
+  // --- State para variables de Hive AI ---
+  const [aiCostPerHour, setAiCostPerHour] = useState(9.00); 
+  const [implementationFee, setImplementationFee] = useState(2500);
+
+  // --- Resultados calculados ---
+  const [results, setResults] = useState({
+    humanMonthlyCost: 0,
+    humanYearlyCost: 0,
+    aiMonthlyCost: 0,
+    aiYearlyCost: 0,
+    savingsYear1: 0,
+    paybackMonths: 0,
+    costPerCallHuman: 0,
+    costPerCallAi: 0,
+    attritionImpact: 0,
+    totalHoursMonth: 0,
+    infrImpact: 0
+  });
+
+  useEffect(() => {
+    // 1. Cálculos Humanos
+    const monthlySalaryTotal = numAgents * avgSalary;
+    const monthlyInfrTotal = numAgents * physicalInfrCost;
+    
+    const yearlyTurnover = numAgents * (attritionRate / 100);
+    const yearlyAttritionCost = yearlyTurnover * trainingCost;
+    const monthlyAttritionCost = yearlyAttritionCost / 12;
+    
+    // Costo Humano Total = Salarios + Infraestructura + Costo de Rotación
+    const totalHumanMonthly = monthlySalaryTotal + monthlyInfrTotal + monthlyAttritionCost;
+    const totalHumanYearly = totalHumanMonthly * 12;
+
+    const totalMonthlyCalls = numAgents * callsPerAgentDay * 22; // 22 días laborales
+    const costPerCallHuman = totalHumanMonthly / totalMonthlyCalls;
+
+    // 2. Cálculos Hive AI
+    const totalMinutesPerMonth = totalMonthlyCalls * avgCallDuration;
+    const totalHoursPerMonth = totalMinutesPerMonth / 60;
+    
+    const monthlyAiUsageCost = totalHoursPerMonth * aiCostPerHour;
+    const totalAiMonthly = monthlyAiUsageCost; 
+    const totalAiYearly = (totalAiMonthly * 12) + implementationFee;
+
+    const costPerCallAi = totalAiMonthly / totalMonthlyCalls;
+
+    // 3. Comparativos y ROI
+    const savingsYear1 = totalHumanYearly - totalAiYearly;
+    const monthlySavings = totalHumanMonthly - totalAiMonthly;
+    const payback = monthlySavings > 0 ? implementationFee / monthlySavings : 0;
+
+    setResults({
+      humanMonthlyCost: totalHumanMonthly,
+      humanYearlyCost: totalHumanYearly,
+      aiMonthlyCost: totalAiMonthly,
+      aiYearlyCost: totalAiYearly,
+      savingsYear1: savingsYear1,
+      paybackMonths: payback,
+      costPerCallHuman: costPerCallHuman,
+      costPerCallAi: costPerCallAi,
+      attritionImpact: monthlyAttritionCost,
+      totalHoursMonth: totalHoursPerMonth,
+      infrImpact: monthlyInfrTotal
+    });
+  }, [numAgents, avgSalary, trainingCost, attritionRate, physicalInfrCost, callsPerAgentDay, avgCallDuration, aiCostPerHour, implementationFee]);
+
+  const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'USD' }).format(val);
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="mb-8 text-center md:text-left flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-indigo-900 flex items-center gap-2">
+              <Calculator className="text-indigo-600" />
+              Calculadora ROI: Humano vs. Hive AI
+            </h1>
+            <p className="text-slate-500 mt-2">Análisis de eficiencia operativa y costos de infraestructura física.</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Ahorro Estimado Año 1</span>
+            <span className="text-2xl font-bold text-emerald-600">{formatCurrency(results.savingsYear1)}</span>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Columna de Inputs */}
+          <div className="lg:col-span-1 space-y-6">
+            
+            {/* Sección Humanos */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-indigo-800">
+                <Users size={20} />
+                Operación Humana
+              </h2>
+              
+              <div className="space-y-4">
+                <InputRange 
+                  label="Número de Agentes" 
+                  value={numAgents} 
+                  onChange={setNumAgents} 
+                  min={1} max={200} 
+                  unit="pers."
+                />
+                <InputRange 
+                  label="Salario + Carga Social (Mes)" 
+                  value={avgSalary} 
+                  onChange={setAvgSalary} 
+                  min={500} max={5000} step={50}
+                  unit="$"
+                />
+                <InputRange 
+                  label="Infraestructura por Agente" 
+                  value={physicalInfrCost} 
+                  onChange={setPhysicalInfrCost} 
+                  min={0} max={1000} step={10}
+                  unit="$"
+                  info="PC, Licencias, Oficina, Luz"
+                />
+                <InputRange 
+                  label="Tasa de Rotación Anual" 
+                  value={attritionRate} 
+                  onChange={setAttritionRate} 
+                  min={0} max={100} 
+                  unit="%"
+                />
+              </div>
+            </div>
+
+            {/* Sección AI */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-indigo-500">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-indigo-800">
+                <TrendingUp size={20} />
+                Solución Hive AI
+              </h2>
+              
+              <div className="space-y-4">
+                <InputRange 
+                  label="Costo por Hora (USD)" 
+                  value={aiCostPerHour} 
+                  onChange={setAiCostPerHour} 
+                  min={1} max={50} step={0.5}
+                  unit="$"
+                />
+                <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-100 mt-2">
+                  <div className="flex justify-between text-xs text-indigo-700 font-medium">
+                    <span>Costo por minuto:</span>
+                    <span>{formatCurrency(aiCostPerHour / 60)}</span>
+                  </div>
+                </div>
+                <InputRange 
+                  label="Costo de Implementación" 
+                  value={implementationFee} 
+                  onChange={setImplementationFee} 
+                  min={0} max={20000} step={500}
+                  unit="$"
+                />
+              </div>
+            </div>
+
+            <div className="bg-indigo-900 p-6 rounded-2xl text-white">
+              <div className="flex items-start gap-3">
+                <Info className="text-indigo-300 mt-1 shrink-0" />
+                <p className="text-sm leading-relaxed text-indigo-100">
+                  <strong>Nota Operativa:</strong> Implementar Hive AI permite reducir el 100% de la inversión en activos físicos para estos puestos de trabajo.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Dashboard de Resultados */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <MetricCard 
+                title="Costo/Llamada Humana"
+                value={formatCurrency(results.costPerCallHuman)}
+                icon={<DollarSign className="text-red-500" />}
+                description="Incluye oficina y rotación"
+              />
+              <MetricCard 
+                title="Costo/Llamada IA"
+                value={formatCurrency(results.costPerCallAi)}
+                icon={<DollarSign className="text-emerald-500" />}
+                description="Basado en tarifa horaria"
+                highlight
+              />
+              <MetricCard 
+                title="Punto de Equilibrio"
+                value={`${results.paybackMonths.toFixed(1)} meses`}
+                icon={<Clock className="text-indigo-500" />}
+                description="Recuperación de inversión"
+              />
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <BarChart3 className="text-indigo-600" />
+                Comparativa de Estructura de Costos
+              </h3>
+
+              <div className="space-y-8">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="font-semibold text-slate-700 uppercase text-xs tracking-wider">Operación Humana Mensual</span>
+                    <span className="font-bold text-slate-900">{formatCurrency(results.humanMonthlyCost)}</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-10 rounded-full overflow-hidden relative border border-slate-200">
+                    <div className="bg-slate-400 h-full transition-all duration-500" style={{ width: '100%' }}></div>
+                    <div className="absolute inset-y-0 left-4 flex items-center text-white text-[11px] font-bold uppercase">
+                      Capex + Opex + RRHH
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="font-semibold text-indigo-700 uppercase text-xs tracking-wider">Hive AI (Variable por Hora)</span>
+                    <span className="font-bold text-indigo-900">{formatCurrency(results.aiMonthlyCost)}</span>
+                  </div>
+                  <div className="w-full bg-indigo-50 h-10 rounded-full overflow-hidden relative border border-indigo-100">
+                    <div 
+                      className="bg-indigo-600 h-full transition-all duration-500"
+                      style={{ width: `${(results.aiMonthlyCost / results.humanMonthlyCost) * 100}%` }}
+                    ></div>
+                    <div className="absolute inset-y-0 right-4 flex items-center text-indigo-600 text-sm font-bold">
+                      {(100 - (results.aiMonthlyCost / results.humanMonthlyCost * 100)).toFixed(0)}% de reducción de gastos
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-12 p-6 bg-slate-50 rounded-xl border border-slate-100">
+                <h4 className="font-bold text-slate-800 mb-4 uppercase text-xs tracking-widest text-center md:text-left">Desglose de Ahorros para Operaciones</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white p-4 rounded-xl border border-slate-200 flex items-start gap-3">
+                    <Building2 className="text-amber-500 shrink-0" size={20} />
+                    <div>
+                      <p className="text-sm font-bold text-slate-700">Costos de Instalación</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Ahorro de <span className="font-bold text-slate-700">{formatCurrency(results.infrImpact)} mensualmente</span> al eliminar puestos de trabajo físicos (muebles, luz, PC).
+                      </p>
+                    </div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-slate-200 flex items-start gap-3">
+                    <AlertCircle className="text-indigo-500 shrink-0" size={20} />
+                    <div>
+                      <p className="text-sm font-bold text-slate-700">Eliminación de Capex</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        No requiere inversión inicial en hardware ni renovación de equipos cada 3 años.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center justify-between bg-indigo-900 p-8 rounded-3xl shadow-xl shadow-indigo-200 gap-6">
+              <div className="text-center md:text-left">
+                <p className="text-indigo-100 font-bold text-xl">¿Listo para liberar capital de trabajo?</p>
+                <p className="text-indigo-300 text-sm mt-1">Sustituya costos fijos de infraestructura por un modelo 100% digital y escalable.</p>
+              </div>
+              <button className="bg-white text-indigo-900 hover:bg-indigo-50 px-8 py-4 rounded-full font-bold transition-all flex items-center gap-2 group whitespace-nowrap shadow-lg">
+                Hablar con un Experto
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Componentes Auxiliares ---
+
+const InputRange = ({ label, value, onChange, min, max, unit, step = 1, info = "" }) => (
+  <div className="space-y-2">
+    <div className="flex justify-between items-center">
+      <div>
+        <label className="text-xs font-semibold text-slate-500 uppercase tracking-tight block">{label}</label>
+        {info && <span className="text-[10px] text-slate-400 font-medium italic">{info}</span>}
+      </div>
+      <span className="text-sm font-bold bg-slate-100 px-2 py-1 rounded text-slate-700 min-w-[70px] text-center border border-slate-200">
+        {unit === "$" ? `$${value}` : `${value} ${unit}`}
+      </span>
+    </div>
+    <input 
+      type="range" 
+      min={min} max={max} step={step}
+      value={value} 
+      onChange={(e) => onChange(parseFloat(e.target.value))}
+      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 hover:accent-indigo-500"
+    />
+  </div>
+);
+
+const MetricCard = ({ title, value, icon, description, highlight = false }) => (
+  <div className={`p-5 rounded-2xl border transition-all ${highlight ? 'bg-indigo-50 border-indigo-200 shadow-lg ring-4 ring-indigo-50' : 'bg-white border-slate-200 shadow-sm'}`}>
+    <div className="flex justify-between items-start mb-3">
+      <div className={`p-2 rounded-lg shadow-sm border ${highlight ? 'bg-white border-indigo-100' : 'bg-slate-50 border-slate-100'}`}>
+        {icon}
+      </div>
+      {highlight && <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Alta Rentabilidad</span>}
+    </div>
+    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{title}</h4>
+    <p className={`text-2xl font-black ${highlight ? 'text-indigo-900' : 'text-slate-900'}`}>{value}</p>
+    <p className="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tight">{description}</p>
+  </div>
+);
+
+export default App;

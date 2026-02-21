@@ -23,6 +23,7 @@
             --brand-dark: #0B0E14;
             --brand-navy: #0F172A;
             --brand-cyan: #00D1FF;
+            --brand-gold: #FACC15; /* El amarillo del logo HiveAI */
             --card-bg: rgba(22, 27, 34, 0.7);
         }
 
@@ -77,6 +78,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* Estilos para el Logo recreado */
+        .logo-hexagon {
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            background-color: var(--brand-gold);
+            width: 24px;
+            height: 28px;
+        }
     </style>
 </head>
 <body class="honeycomb-pattern min-h-screen pb-20">
@@ -85,8 +94,27 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
+        const Logo = () => (
+            <div className="flex items-center gap-4 mb-6 group cursor-default">
+                {/* Estructura de Triple Hexágono de la imagen */}
+                <div className="relative w-14 h-14 flex items-center justify-center">
+                    <div className="logo-hexagon absolute top-1 left-1"></div>
+                    <div className="logo-hexagon absolute top-1 right-1"></div>
+                    <div className="logo-hexagon absolute bottom-1 left-1/2 -translate-x-1/2"></div>
+                </div>
+                <div>
+                    <div className="flex items-baseline leading-none">
+                        <span className="text-3xl font-extrabold text-white tracking-tight">Hive</span>
+                        <span className="text-3xl font-extrabold text-[#FACC15] tracking-tight italic ml-0.5">AI</span>
+                    </div>
+                    <p className="text-[9px] font-medium text-slate-400 uppercase tracking-[0.1em] mt-1">
+                        La inteligencia que trabaja en equipo
+                    </p>
+                </div>
+            </div>
+        );
+
         const App = () => {
-            // State con valores iniciales ajustados: 2 agentes, $400 salario
             const [numAgents, setNumAgents] = useState(2);
             const [avgSalary, setAvgSalary] = useState(400);
             const [physicalInfrCost, setPhysicalInfrCost] = useState(200);
@@ -95,6 +123,7 @@
             
             const [hoursSpokenPerDay, setHoursSpokenPerDay] = useState(4.5);
             const [aiCostPerHour, setAiCostPerHour] = useState(9.00); 
+            const [aiMonthlyFee, setAiMonthlyFee] = useState(500);
             const [implementationFee, setImplementationFee] = useState(4000);
 
             const [results, setResults] = useState({
@@ -110,15 +139,14 @@
             const WORKING_DAYS = 20;
 
             useEffect(() => {
-                // Cálculo Humano (Costo Fijo Mensual)
                 const monthlySalary = numAgents * avgSalary;
                 const monthlyInfra = numAgents * physicalInfrCost;
                 const monthlyAttrition = (numAgents * (attritionRate / 100) * trainingCost) / 12;
                 const totalHuman = monthlySalary + monthlyInfra + monthlyAttrition;
 
-                // Cálculo AI (Costo Variable Efectivo)
                 const totalHoursMonth = numAgents * hoursSpokenPerDay * WORKING_DAYS;
-                const totalAiMonthly = totalHoursMonth * aiCostPerHour;
+                const variableCostMonthly = totalHoursMonth * aiCostPerHour;
+                const totalAiMonthly = variableCostMonthly + aiMonthlyFee;
 
                 const savingsYear1 = (totalHuman * 12) - ((totalAiMonthly * 12) + implementationFee);
                 const monthlySavings = totalHuman - totalAiMonthly;
@@ -177,7 +205,7 @@
                 });
 
                 if (window.lucide) lucide.createIcons();
-            }, [numAgents, avgSalary, physicalInfrCost, attritionRate, trainingCost, hoursSpokenPerDay, aiCostPerHour, implementationFee]);
+            }, [numAgents, avgSalary, physicalInfrCost, attritionRate, trainingCost, hoursSpokenPerDay, aiCostPerHour, aiMonthlyFee, implementationFee]);
 
             const fmt = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
@@ -188,19 +216,14 @@
             return (
                 <div className="container mx-auto px-4 md:px-12 pt-12">
                     
-                    {/* Header Section */}
+                    {/* Header Section con el nuevo Logo */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                         <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                                    <i data-lucide="layers" className="text-white" size="18"></i>
-                                </div>
-                                <span className="text-xl font-black tracking-tighter uppercase tracking-[0.3em]">HIVEAI</span>
-                            </div>
+                            <Logo />
                             <h1 className="text-5xl font-extrabold text-gradient leading-tight">Proyección de Ahorro Operativo</h1>
-                            <p className="text-slate-400 mt-3 text-xl font-light">Basado en un modelo de facturación por tiempo efectivo de llamada.</p>
+                            <p className="text-slate-400 mt-3 text-xl font-light">Facturación híbrida: Fee de mantenimiento + tiempo efectivo de llamada.</p>
                         </div>
-                        <div className="premium-card px-10 py-6 border-l-4 border-l-[#00D1FF] shadow-2xl">
+                        <div className="premium-card px-10 py-6 border-l-4 border-l-[#FACC15] shadow-2xl">
                             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Ahorro Neto Año 1</span>
                             <span className="text-4xl font-black text-white">{fmt(results.savingsYear1)}</span>
                         </div>
@@ -219,7 +242,7 @@
                         {/* Control Panel */}
                         <div className="lg:col-span-4 space-y-8">
                             <div className="premium-card p-8">
-                                <h2 className="text-xs font-black text-[#00D1FF] uppercase tracking-[0.25em] mb-10 flex items-center gap-2">
+                                <h2 className="text-xs font-black text-[#FACC15] uppercase tracking-[0.25em] mb-10 flex items-center gap-2">
                                     <i data-lucide="user-check" size="14"></i> Factores Humanos (Fijos)
                                 </h2>
                                 <div className="space-y-10">
@@ -229,9 +252,9 @@
                                 </div>
                             </div>
 
-                            <div className="premium-card p-8 bg-[#00D1FF]/5 border-[#00D1FF]/10">
-                                <h2 className="text-xs font-black text-[#00D1FF] uppercase tracking-[0.25em] mb-10 flex items-center gap-2">
-                                    <i data-lucide="phone-call" size="14"></i> Consumo HiveAI (Variable)
+                            <div className="premium-card p-8 bg-[#FACC15]/5 border-[#FACC15]/10">
+                                <h2 className="text-xs font-black text-[#FACC15] uppercase tracking-[0.25em] mb-10 flex items-center gap-2">
+                                    <i data-lucide="phone-call" size="14"></i> Consumo HiveAI
                                 </h2>
                                 <div className="space-y-10">
                                     <InputBlock 
@@ -241,6 +264,7 @@
                                         min={0.5} max={12} step={0.5} 
                                         unit=" h/agente" 
                                     />
+                                    <InputBlock label="Fee Mensual HiveAI" val={aiMonthlyFee} set={setAiMonthlyFee} min={0} max={5000} step={100} unit=" $" />
                                     <InputBlock label="Costo por Hora" val={aiCostPerHour} set={setAiCostPerHour} min={1} max={50} step={0.5} unit=" $/h" />
                                 </div>
                                 <div className="mt-8 pt-6 border-t border-white/5 text-[10px] text-slate-500 uppercase tracking-widest text-center">
@@ -255,7 +279,7 @@
                                 <div className="flex justify-between items-center mb-12">
                                     <div>
                                         <h3 className="text-2xl font-bold">Análisis Comparativo Mensual</h3>
-                                        <p className="text-sm text-slate-500 mt-1">Comparativa entre costos de estructura fijos vs. modelo variable HiveAI.</p>
+                                        <p className="text-sm text-slate-500 mt-1">Comparativa entre costos de estructura fijos vs. modelo híbrido HiveAI.</p>
                                     </div>
                                     <div className="hidden md:flex gap-6">
                                         <LegendItem label="Estructura Tradicional" color="rgba(255,255,255,0.1)" />
@@ -267,12 +291,28 @@
                                 </div>
 
                                 <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-white/5 pt-12">
-                                    <Insight icon="shield" title="Pago por Uso Real" text="A diferencia del modelo humano, HiveAI factura únicamente por los minutos de conexión efectiva, eliminando el gasto por tiempos muertos." />
-                                    <Insight icon="refresh-cw" title="Inversión Amortizada" text={`Con un fee de ${fmt(implementationFee)}, el retorno se completa en ${results.payback.toFixed(1)} meses gracias a la reducción inmediata de OPEX.`} />
+                                    <div className="flex gap-6">
+                                        <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
+                                            <i data-lucide="shield" className="text-[#00D1FF]" size="20"></i>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-white uppercase text-xs tracking-wider mb-2">Costeo por Uso Efectivo</h4>
+                                            <p className="text-sm text-slate-500 leading-relaxed font-light">HiveAI factura únicamente el tiempo de aire real, permitiendo una escalabilidad lineal sin pagar por tiempos de espera.</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-6">
+                                        <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
+                                            <i data-lucide="refresh-cw" className="text-[#00D1FF]" size="20"></i>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-white uppercase text-xs tracking-wider mb-2">Punto de Amortización</h4>
+                                            <p className="text-sm text-slate-500 leading-relaxed font-light">Incluso con un fee mensual recurrente, la eliminación de costos ocultos humanos recupera la inversión en {results.payback.toFixed(1)} meses.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* CTA Box con funcionalidad mailto */}
+                            {/* CTA Box */}
                             <div className="bg-gradient-to-br from-[#00D1FF] to-[#0055FF] rounded-[32px] p-12 flex flex-col md:flex-row justify-between items-center gap-10 shadow-2xl">
                                 <div className="text-center md:text-left">
                                     <h4 className="text-3xl font-black text-white leading-tight">Optimice su inversión operativa hoy mismo</h4>
@@ -321,18 +361,6 @@
             <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ background: color }}></div>
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{label}</span>
-            </div>
-        );
-
-        const Insight = ({ icon, title, text }) => (
-            <div className="flex gap-6">
-                <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
-                    <i data-lucide={icon} className="text-[#00D1FF]" size="20"></i>
-                </div>
-                <div>
-                    <h4 className="font-black text-white uppercase text-xs tracking-wider mb-2">{title}</h4>
-                    <p className="text-sm text-slate-500 leading-relaxed font-light">{text}</p>
-                </div>
             </div>
         );
 

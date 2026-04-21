@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HiveAI | Simulador de ROI Enterprise</title>
+    <title>AidToGrow | Simulador de ROI - ROI Voice AI</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React & ReactDOM -->
@@ -23,7 +23,7 @@
             --brand-dark: #0B0E14;
             --brand-navy: #0F172A;
             --brand-cyan: #00D1FF;
-            --brand-gold: #FACC15; /* El amarillo del logo HiveAI */
+            --brand-gold: #FACC15; /* Amarillo corporativo AidToGrow */
             --card-bg: rgba(22, 27, 34, 0.7);
         }
 
@@ -96,7 +96,7 @@
 
         const Logo = () => (
             <div className="flex items-center gap-4 mb-6 group cursor-default">
-                {/* Estructura de Triple Hexágono de la imagen */}
+                {/* Estructura de Triple HexÃ¡gono de la imagen */}
                 <div className="relative w-14 h-14 flex items-center justify-center">
                     <div className="logo-hexagon absolute top-1 left-1"></div>
                     <div className="logo-hexagon absolute top-1 right-1"></div>
@@ -104,11 +104,11 @@
                 </div>
                 <div>
                     <div className="flex items-baseline leading-none">
-                        <span className="text-3xl font-extrabold text-white tracking-tight">Hive</span>
-                        <span className="text-3xl font-extrabold text-[#FACC15] tracking-tight italic ml-0.5">AI</span>
+                        <span className="text-3xl font-extrabold text-white tracking-tight">Aid</span>
+                        <span className="text-3xl font-extrabold text-[#FACC15] tracking-tight italic ml-0.5">ToGrow</span>
                     </div>
                     <p className="text-[9px] font-medium text-slate-400 uppercase tracking-[0.1em] mt-1">
-                        La inteligencia que trabaja en equipo
+                        Automatiza - Crece - Escala con IA
                     </p>
                 </div>
             </div>
@@ -167,7 +167,7 @@
                 chartInstance.current = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['Costos Humanos', 'HiveAI Virtuals'],
+                        labels: ['Costos Humanos', 'AidToGrow Virtuals'],
                         datasets: [{
                             data: [totalHuman, totalAiMonthly],
                             backgroundColor: (context) => {
@@ -210,7 +210,7 @@
             const fmt = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
             const handleRequestDemo = () => {
-                window.location.href = "mailto:comercial@hiveai.solutions";
+                window.location.href = "mailto:comercial@aidtogrow.com";
             };
 
             return (
@@ -220,11 +220,11 @@
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                         <div>
                             <Logo />
-                            <h1 className="text-5xl font-extrabold text-gradient leading-tight">Proyección de Ahorro Operativo</h1>
-                            <p className="text-slate-400 mt-3 text-xl font-light">Facturación híbrida: Fee de mantenimiento + tiempo efectivo de llamada.</p>
+                            <h1 className="text-5xl font-extrabold text-gradient leading-tight">ProyecciÃ³n de Ahorro Operativo</h1>
+                            <p className="text-slate-400 mt-3 text-xl font-light">FacturaciÃ³n hÃ­brida: Fee de mantenimiento + tiempo efectivo de llamada.</p>
                         </div>
                         <div className="premium-card px-10 py-6 border-l-4 border-l-[#FACC15] shadow-2xl">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Ahorro Neto Año 1</span>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Ahorro Neto AÃ±o 1</span>
                             <span className="text-4xl font-black text-white">{fmt(results.savingsYear1)}</span>
                         </div>
                     </div>
@@ -246,7 +246,7 @@
                                     <i data-lucide="user-check" size="14"></i> Factores Humanos (Fijos)
                                 </h2>
                                 <div className="space-y-10">
-                                    <InputBlock label="Nº de Agentes" val={numAgents} set={setNumAgents} min={1} max={200} unit=" PAX" />
+                                    <InputBlock label="NÂº de Agentes" val={numAgents} set={setNumAgents} min={1} max={200} unit=" PAX" />
                                     <InputBlock label="Salario + Beneficios" val={avgSalary} set={setAvgSalary} min={100} max={8000} step={50} unit=" $" />
                                     <InputBlock label="Infraestructura / Mes" val={physicalInfrCost} set={setPhysicalInfrCost} min={0} max={1000} unit=" $" />
                                 </div>
@@ -254,21 +254,21 @@
 
                             <div className="premium-card p-8 bg-[#FACC15]/5 border-[#FACC15]/10">
                                 <h2 className="text-xs font-black text-[#FACC15] uppercase tracking-[0.25em] mb-10 flex items-center gap-2">
-                                    <i data-lucide="phone-call" size="14"></i> Consumo HiveAI
+                                    <i data-lucide="phone-call" size="14"></i> Consumo AidToGrow
                                 </h2>
                                 <div className="space-y-10">
                                     <InputBlock 
-                                        label="Horas habladas / día" 
+                                        label="Horas habladas / dÃ­a" 
                                         val={hoursSpokenPerDay} 
                                         set={setHoursSpokenPerDay} 
                                         min={0.5} max={12} step={0.5} 
                                         unit=" h/agente" 
                                     />
-                                    <InputBlock label="Fee Mensual HiveAI" val={aiMonthlyFee} set={setAiMonthlyFee} min={0} max={5000} step={100} unit=" $" />
+                                    <InputBlock label="Fee Mensual AidToGrow" val={aiMonthlyFee} set={setAiMonthlyFee} min={0} max={5000} step={100} unit=" $" />
                                     <InputBlock label="Costo por Hora" val={aiCostPerHour} set={setAiCostPerHour} min={1} max={50} step={0.5} unit=" $/h" />
                                 </div>
                                 <div className="mt-8 pt-6 border-t border-white/5 text-[10px] text-slate-500 uppercase tracking-widest text-center">
-                                    Cálculo basado en 20 días laborales/mes
+                                    CÃ¡lculo basado en 20 dÃ­as laborales/mes
                                 </div>
                             </div>
                         </div>
@@ -278,12 +278,12 @@
                             <div className="premium-card p-10">
                                 <div className="flex justify-between items-center mb-12">
                                     <div>
-                                        <h3 className="text-2xl font-bold">Análisis Comparativo Mensual</h3>
-                                        <p className="text-sm text-slate-500 mt-1">Comparativa entre costos de estructura fijos vs. modelo híbrido HiveAI.</p>
+                                        <h3 className="text-2xl font-bold">AnÃ¡lisis Comparativo Mensual</h3>
+                                        <p className="text-sm text-slate-500 mt-1">Comparativa entre costos de estructura fijos vs. modelo hÃ­brido HiveAI.</p>
                                     </div>
                                     <div className="hidden md:flex gap-6">
                                         <LegendItem label="Estructura Tradicional" color="rgba(255,255,255,0.1)" />
-                                        <LegendItem label="HiveAI Billing" color="#00D1FF" />
+                                        <LegendItem label="AidToGrow Billing" color="#00D1FF" />
                                     </div>
                                 </div>
                                 <div className="chart-container">
@@ -297,7 +297,7 @@
                                         </div>
                                         <div>
                                             <h4 className="font-black text-white uppercase text-xs tracking-wider mb-2">Costeo por Uso Efectivo</h4>
-                                            <p className="text-sm text-slate-500 leading-relaxed font-light">HiveAI factura únicamente el tiempo de aire real, permitiendo una escalabilidad lineal sin pagar por tiempos de espera.</p>
+                                            <p className="text-sm text-slate-500 leading-relaxed font-light">AidToGrow factura Ãºnicamente el tiempo de aire real, permitiendo una escalabilidad lineal sin pagar por tiempos de espera.</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-6">
@@ -305,8 +305,8 @@
                                             <i data-lucide="refresh-cw" className="text-[#00D1FF]" size="20"></i>
                                         </div>
                                         <div>
-                                            <h4 className="font-black text-white uppercase text-xs tracking-wider mb-2">Punto de Amortización</h4>
-                                            <p className="text-sm text-slate-500 leading-relaxed font-light">Incluso con un fee mensual recurrente, la eliminación de costos ocultos humanos recupera la inversión en {results.payback.toFixed(1)} meses.</p>
+                                            <h4 className="font-black text-white uppercase text-xs tracking-wider mb-2">Punto de AmortizaciÃ³n</h4>
+                                            <p className="text-sm text-slate-500 leading-relaxed font-light">Incluso con un fee mensual recurrente, la eliminaciÃ³n de costos ocultos humanos recupera la inversiÃ³n en {results.payback.toFixed(1)} meses.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -315,8 +315,8 @@
                             {/* CTA Box */}
                             <div className="bg-gradient-to-br from-[#00D1FF] to-[#0055FF] rounded-[32px] p-12 flex flex-col md:flex-row justify-between items-center gap-10 shadow-2xl">
                                 <div className="text-center md:text-left">
-                                    <h4 className="text-3xl font-black text-white leading-tight">Optimice su inversión operativa hoy mismo</h4>
-                                    <p className="text-white/80 font-medium mt-2 italic text-lg">"Sincronización perfecta. Eficiencia infinita."</p>
+                                    <h4 className="text-3xl font-black text-white leading-tight">Optimice su inversiÃ³n operativa hoy mismo</h4>
+                                    <p className="text-white/80 font-medium mt-2 italic text-lg">"SincronizaciÃ³n perfecta. Eficiencia infinita."</p>
                                 </div>
                                 <button 
                                     onClick={handleRequestDemo}
@@ -369,3 +369,5 @@
     </script>
 </body>
 </html>
+
+

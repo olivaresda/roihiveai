@@ -2,6 +2,10 @@
 
 Esta herramienta permite a gerentes de operaciones y directores financieros (CFO) proyectar el ahorro potencial al migrar de una operación de agentes humanos a agentes conversacionales con voces clonadas impulsados por Hive AI.
 
+📁 Otros proyectos en este repositorio
+
+- [`kiosco-kolega-happypay/`](./kiosco-kolega-happypay): kiosco con avatar animado y voz para HappyPay Ecuador (ver README propio en esa carpeta).
+
 🚀 Características
 
 Cálculo de ROI Dinámico: Ajuste de variables en tiempo real.
